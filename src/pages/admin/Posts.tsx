@@ -50,7 +50,7 @@ const postSchema = z.object({
   title: z.string().min(1, "Título é obrigatório").max(200),
 
   content: z.string().min(1, "Conteúdo é obrigatório"),
-  excerpt: z.string().max(500).optional(),
+
   published: z.boolean(),
   categoryId: z.string().optional(),
 });
@@ -104,7 +104,6 @@ export default function Posts() {
       title: "",
 
       content: "",
-      excerpt: "",
       published: false,
       categoryId: undefined,
     });
@@ -117,7 +116,6 @@ export default function Posts() {
       title: post.title,
 
       content: post.content,
-      excerpt: post.excerpt || "",
       published: post.published,
       categoryId: post.categoryId ? String(post.categoryId) : undefined,
     });
@@ -283,11 +281,6 @@ export default function Posts() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="excerpt">Resumo</Label>
-                <Textarea id="excerpt" rows={2} {...register("excerpt")} />
               </div>
 
               <div className="space-y-2">
