@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react';
-import { AdminLayout } from '@/components/layouts/AdminLayout';
-import { postsApi, categoriesApi } from '@/lib/api';
-import type { Post, Category } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
+import { useState, useEffect } from "react";
+import { AdminLayout } from "@/components/layouts/AdminLayout";
+import { postsApi, categoriesApi } from "@/lib/api";
+import type { Post, Category } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -15,21 +15,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,18 +38,18 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+} from "@/components/ui/alert-dialog";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { format } from "date-fns";
 
 const postSchema = z.object({
-  title: z.string().min(1, 'Título é obrigatório').max(200),
-  slug: z.string().min(1, 'Slug é obrigatório').max(200),
-  content: z.string().min(1, 'Conteúdo é obrigatório'),
+  title: z.string().min(1, "Título é obrigatório").max(200),
+
+  content: z.string().min(1, "Conteúdo é obrigatório"),
   excerpt: z.string().max(500).optional(),
   published: z.boolean(),
   categoryId: z.string().optional(),
@@ -89,7 +88,7 @@ export default function Posts() {
       setPosts(Array.isArray(postsData) ? postsData : postsData.data);
       setCategories(categoriesData);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error("Error loading data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +100,14 @@ export default function Posts() {
 
   const openCreateDialog = () => {
     setEditingPost(null);
-    reset({ title: '', slug: '', content: '', excerpt: '', published: false, categoryId: undefined });
+    reset({
+      title: "",
+
+      content: "",
+      excerpt: "",
+      published: false,
+      categoryId: undefined,
+    });
     setIsDialogOpen(true);
   };
 
@@ -109,9 +115,9 @@ export default function Posts() {
     setEditingPost(post);
     reset({
       title: post.title,
-      slug: post.slug,
+
       content: post.content,
-      excerpt: post.excerpt || '',
+      excerpt: post.excerpt || "",
       published: post.published,
       categoryId: post.categoryId ? String(post.categoryId) : undefined,
     });
@@ -128,18 +134,18 @@ export default function Posts() {
 
       if (editingPost) {
         await postsApi.update(editingPost.id, payload);
-        toast({ title: 'Post atualizado com sucesso!' });
+        toast({ title: "Post atualizado com sucesso!" });
       } else {
         await postsApi.create(payload);
-        toast({ title: 'Post criado com sucesso!' });
+        toast({ title: "Post criado com sucesso!" });
       }
       setIsDialogOpen(false);
       loadData();
     } catch (error: any) {
       toast({
-        title: 'Erro ao salvar post',
-        description: error.response?.data?.message || 'Tente novamente.',
-        variant: 'destructive',
+        title: "Erro ao salvar post",
+        description: error.response?.data?.message || "Tente novamente.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -150,14 +156,14 @@ export default function Posts() {
     if (!deletingPost) return;
     try {
       await postsApi.delete(deletingPost.id);
-      toast({ title: 'Post deletado com sucesso!' });
+      toast({ title: "Post deletado com sucesso!" });
       setDeletingPost(null);
       loadData();
     } catch (error: any) {
       toast({
-        title: 'Erro ao deletar post',
-        description: error.response?.data?.message || 'Tente novamente.',
-        variant: 'destructive',
+        title: "Erro ao deletar post",
+        description: error.response?.data?.message || "Tente novamente.",
+        variant: "destructive",
       });
     }
   };
@@ -196,7 +202,10 @@ export default function Posts() {
                 </TableRow>
               ) : posts.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell
+                    colSpan={5}
+                    className="text-center py-8 text-muted-foreground"
+                  >
                     Nenhum post encontrado
                   </TableCell>
                 </TableRow>
@@ -204,19 +213,29 @@ export default function Posts() {
                 posts.map((post) => (
                   <TableRow key={post.id}>
                     <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>{post.category?.name || '-'}</TableCell>
+                    <TableCell>{post.category?.name || "-"}</TableCell>
                     <TableCell>
-                      <Badge variant={post.published ? 'default' : 'secondary'}>
-                        {post.published ? 'Publicado' : 'Rascunho'}
+                      <Badge variant={post.published ? "default" : "secondary"}>
+                        {post.published ? "Publicado" : "Rascunho"}
                       </Badge>
                     </TableCell>
-                    <TableCell>{format(new Date(post.createdAt), 'dd/MM/yyyy')}</TableCell>
+                    <TableCell>
+                      {format(new Date(post.createdAt), "dd/MM/yyyy")}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => openEditDialog(post)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEditDialog(post)}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeletingPost(post)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeletingPost(post)}
+                        >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>
@@ -232,26 +251,26 @@ export default function Posts() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingPost ? 'Editar Post' : 'Novo Post'}</DialogTitle>
+              <DialogTitle>
+                {editingPost ? "Editar Post" : "Novo Post"}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="title">Título</Label>
-                <Input id="title" {...register('title')} />
-                {errors.title && <p className="text-sm text-destructive">{errors.title.message}</p>}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="slug">Slug</Label>
-                <Input id="slug" {...register('slug')} />
-                {errors.slug && <p className="text-sm text-destructive">{errors.slug.message}</p>}
+                <Input id="title" {...register("title")} />
+                {errors.title && (
+                  <p className="text-sm text-destructive">
+                    {errors.title.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="categoryId">Categoria</Label>
                 <Select
-                  value={watch('categoryId') || ''}
-                  onValueChange={(value) => setValue('categoryId', value)}
+                  value={watch("categoryId") || ""}
+                  onValueChange={(value) => setValue("categoryId", value)}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione uma categoria" />
@@ -268,31 +287,41 @@ export default function Posts() {
 
               <div className="space-y-2">
                 <Label htmlFor="excerpt">Resumo</Label>
-                <Textarea id="excerpt" rows={2} {...register('excerpt')} />
+                <Textarea id="excerpt" rows={2} {...register("excerpt")} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="content">Conteúdo</Label>
-                <Textarea id="content" rows={8} {...register('content')} />
-                {errors.content && <p className="text-sm text-destructive">{errors.content.message}</p>}
+                <Textarea id="content" rows={8} {...register("content")} />
+                {errors.content && (
+                  <p className="text-sm text-destructive">
+                    {errors.content.message}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
                 <Switch
                   id="published"
-                  checked={watch('published')}
-                  onCheckedChange={(checked) => setValue('published', checked)}
+                  checked={watch("published")}
+                  onCheckedChange={(checked) => setValue("published", checked)}
                 />
                 <Label htmlFor="published">Publicar</Label>
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {editingPost ? 'Salvar' : 'Criar'}
+                  {isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {editingPost ? "Salvar" : "Criar"}
                 </Button>
               </div>
             </form>
@@ -300,17 +329,24 @@ export default function Posts() {
         </Dialog>
 
         {/* Delete Confirmation */}
-        <AlertDialog open={!!deletingPost} onOpenChange={() => setDeletingPost(null)}>
+        <AlertDialog
+          open={!!deletingPost}
+          onOpenChange={() => setDeletingPost(null)}
+        >
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
               <AlertDialogDescription>
-                Tem certeza que deseja excluir o post "{deletingPost?.title}"? Esta ação não pode ser desfeita.
+                Tem certeza que deseja excluir o post "{deletingPost?.title}"?
+                Esta ação não pode ser desfeita.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
                 Excluir
               </AlertDialogAction>
             </AlertDialogFooter>
