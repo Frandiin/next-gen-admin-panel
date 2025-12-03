@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
-import { AdminLayout } from '@/components/layouts/AdminLayout';
-import { usersApi } from '@/lib/api';
-import type { User } from '@/types';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from "react";
+import { AdminLayout } from "@/components/layouts/AdminLayout";
+import { usersApi } from "@/lib/api";
+import type { User } from "@/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -13,20 +13,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -36,19 +36,23 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useToast } from '@/hooks/use-toast';
-import { Plus, Pencil, Trash2, Loader2 } from 'lucide-react';
-import { format } from 'date-fns';
+} from "@/components/ui/alert-dialog";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import { format } from "date-fns";
 
 const userSchema = z.object({
-  name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres').max(100),
-  email: z.string().email('Email inválido').max(255),
-  password: z.string().min(6, 'Senha deve ter no mínimo 6 caracteres').optional().or(z.literal('')),
-  role: z.enum(['USER', 'ADMIN']),
+  name: z.string().min(2, "Nome deve ter no mínimo 2 caracteres").max(100),
+  email: z.string().email("Email inválido").max(255),
+  password: z
+    .string()
+    .min(6, "Senha deve ter no mínimo 6 caracteres")
+    .optional()
+    .or(z.literal("")),
+  role: z.enum(["USER", "ADMIN"]),
 });
 
 type UserForm = z.infer<typeof userSchema>;
@@ -71,15 +75,15 @@ export default function UsersAdmin() {
     formState: { errors },
   } = useForm<UserForm>({
     resolver: zodResolver(userSchema),
-    defaultValues: { role: 'USER' },
+    defaultValues: { role: "USER" },
   });
 
   const loadUsers = async () => {
     try {
-      const data = await usersApi.getAll();
-      setUsers(data);
+      const res = await usersApi.getAll();
+      setUsers(res.data);
     } catch (error) {
-      console.error('Error loading users:', error);
+      console.error("Error loading users:", error);
     } finally {
       setIsLoading(false);
     }
@@ -91,7 +95,7 @@ export default function UsersAdmin() {
 
   const openCreateDialog = () => {
     setEditingUser(null);
-    reset({ name: '', email: '', password: '', role: 'USER' });
+    reset({ name: "", email: "", password: "", role: "USER" });
     setIsDialogOpen(true);
   };
 
@@ -100,7 +104,7 @@ export default function UsersAdmin() {
     reset({
       name: user.name,
       email: user.email,
-      password: '',
+      password: "",
       role: user.role,
     });
     setIsDialogOpen(true);
@@ -116,23 +120,23 @@ export default function UsersAdmin() {
           role: data.role,
         };
         await usersApi.update(editingUser.id, updateData);
-        toast({ title: 'Usuário atualizado com sucesso!' });
+        toast({ title: "Usuário atualizado com sucesso!" });
       } else {
         await usersApi.create({
           name: data.name,
           email: data.email,
-          password: data.password || '',
+          password: data.password || "",
           role: data.role,
         });
-        toast({ title: 'Usuário criado com sucesso!' });
+        toast({ title: "Usuário criado com sucesso!" });
       }
       setIsDialogOpen(false);
       loadUsers();
     } catch (error: any) {
       toast({
-        title: 'Erro ao salvar usuário',
-        description: error.response?.data?.message || 'Tente novamente.',
-        variant: 'destructive',
+        title: "Erro ao salvar usuário",
+        description: error.response?.data?.message || "Tente novamente.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
@@ -143,14 +147,14 @@ export default function UsersAdmin() {
     if (!deletingUser) return;
     try {
       await usersApi.delete(deletingUser.id);
-      toast({ title: 'Usuário deletado com sucesso!' });
+      toast({ title: "Usuário deletado com sucesso!" });
       setDeletingUser(null);
       loadUsers();
     } catch (error: any) {
       toast({
-        title: 'Erro ao deletar usuário',
-        description: error.response?.data?.message || 'Tente novamente.',
-        variant: 'destructive',
+        title: "Erro ao deletar usuário",
+        description: error.response?.data?.message || "Tente novamente.",
+        variant: "destructive",
       });
     }
   };
@@ -161,7 +165,9 @@ export default function UsersAdmin() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-serif font-bold">Usuários</h1>
-            <p className="text-muted-foreground">Gerencie os usuários do sistema</p>
+            <p className="text-muted-foreground">
+              Gerencie os usuários do sistema
+            </p>
           </div>
           <Button onClick={openCreateDialog}>
             <Plus className="h-4 w-4 mr-2" />
@@ -189,7 +195,10 @@ export default function UsersAdmin() {
                 </TableRow>
               ) : users.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell
+                    colSpan={5}
+                    className="text-center py-8 text-muted-foreground"
+                  >
                     Nenhum usuário encontrado
                   </TableCell>
                 </TableRow>
@@ -197,19 +206,35 @@ export default function UsersAdmin() {
                 users.map((user) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell className="text-muted-foreground">{user.email}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {user.email}
+                    </TableCell>
                     <TableCell>
-                      <Badge variant={user.role === 'ADMIN' ? 'default' : 'secondary'}>
-                        {user.role === 'ADMIN' ? 'Admin' : 'Usuário'}
+                      <Badge
+                        variant={
+                          user.role === "ADMIN" ? "default" : "secondary"
+                        }
+                      >
+                        {user.role === "ADMIN" ? "Admin" : "Usuário"}
                       </Badge>
                     </TableCell>
-                    <TableCell>{format(new Date(user.createdAt), 'dd/MM/yyyy')}</TableCell>
+                    <TableCell>
+                      {format(new Date(user.createdAt), "dd/MM/yyyy")}
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="icon" onClick={() => openEditDialog(user)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openEditDialog(user)}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeletingUser(user)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeletingUser(user)}
+                        >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>
                       </div>
@@ -225,32 +250,60 @@ export default function UsersAdmin() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{editingUser ? 'Editar Usuário' : 'Novo Usuário'}</DialogTitle>
+              <DialogTitle>
+                {editingUser ? "Editar Usuário" : "Novo Usuário"}
+              </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Nome</Label>
-                <Input id="name" {...register('name')} />
-                {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+                <Input id="name" {...register("name")} />
+                {errors.name && (
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" {...register('email')} />
-                {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+                <Input id="email" type="email" {...register("email")} />
+                {errors.email && (
+                  <p className="text-sm text-destructive">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="password">
-                  Senha {editingUser && <span className="text-muted-foreground text-xs">(deixe vazio para manter)</span>}
+                  Senha{" "}
+                  {editingUser && (
+                    <span className="text-muted-foreground text-xs">
+                      (deixe vazio para manter)
+                    </span>
+                  )}
                 </Label>
-                <Input id="password" type="password" {...register('password')} />
-                {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                <Input
+                  id="password"
+                  type="password"
+                  {...register("password")}
+                />
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="role">Papel</Label>
-                <Select value={watch('role')} onValueChange={(value: 'USER' | 'ADMIN') => setValue('role', value)}>
+                <Select
+                  value={watch("role")}
+                  onValueChange={(value: "USER" | "ADMIN") =>
+                    setValue("role", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -262,12 +315,18 @@ export default function UsersAdmin() {
               </div>
 
               <div className="flex justify-end gap-2 pt-4">
-                <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsDialogOpen(false)}
+                >
                   Cancelar
                 </Button>
                 <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  {editingUser ? 'Salvar' : 'Criar'}
+                  {isSubmitting && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {editingUser ? "Salvar" : "Criar"}
                 </Button>
               </div>
             </form>
@@ -275,17 +334,24 @@ export default function UsersAdmin() {
         </Dialog>
 
         {/* Delete Confirmation */}
-        <AlertDialog open={!!deletingUser} onOpenChange={() => setDeletingUser(null)}>
+        <AlertDialog
+          open={!!deletingUser}
+          onOpenChange={() => setDeletingUser(null)}
+        >
           <AlertDialogContent>
             <AlertDialogHeader>
               <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
               <AlertDialogDescription>
-                Tem certeza que deseja excluir o usuário "{deletingUser?.name}"? Esta ação não pode ser desfeita.
+                Tem certeza que deseja excluir o usuário "{deletingUser?.name}"?
+                Esta ação não pode ser desfeita.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancelar</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
                 Excluir
               </AlertDialogAction>
             </AlertDialogFooter>

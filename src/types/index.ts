@@ -2,9 +2,18 @@ export interface User {
   id: number;
   email: string;
   name: string;
-  role: 'USER' | 'ADMIN';
+  role: "USER" | "ADMIN";
   createdAt: string;
   updatedAt: string;
+}
+export interface UsersResponse {
+  data: User[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
 }
 
 export interface Category {
@@ -32,6 +41,7 @@ export interface Post {
 }
 
 export interface AuthResponse {
+  refresh_token?: string;
   access_token: string;
   user: User;
 }

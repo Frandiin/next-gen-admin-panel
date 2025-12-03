@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import type { User } from '@/types';
-import { authApi } from '@/lib/api';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import type { User } from "@/types";
+import { authApi } from "@/lib/api";
 
 interface AuthContextType {
   user: User | null;
@@ -19,19 +25,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
+    const token = localStorage.getItem("accessToken");
+    const storedUser = localStorage.getItem("user");
+
     if (token && storedUser) {
       try {
         setUser(JSON.parse(storedUser));
         // Optionally verify token with server
         const profile = await authApi.getProfile();
         setUser(profile);
-        localStorage.setItem('user', JSON.stringify(profile));
+        localStorage.setItem("user", JSON.stringify(profile));
       } catch {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("user");
         setUser(null);
       }
     }
@@ -44,21 +50,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const response = await authApi.login({ email, password });
-    localStorage.setItem('token', response.access_token);
-    localStorage.setItem('user', JSON.stringify(response.user));
+    localStorage.setItem("accessToken", response.access_token);
+    localStorage.setItem("user", JSON.stringify(response.user));
     setUser(response.user);
   };
 
   const register = async (email: string, password: string, name: string) => {
     const response = await authApi.register({ email, password, name });
-    localStorage.setItem('token', response.access_token);
-    localStorage.setItem('user', JSON.stringify(response.user));
+    localStorage.setItem("accessToken", response.access_token);
+    localStorage.setItem("user", JSON.stringify(response.user));
     setUser(response.user);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
     setUser(null);
   };
 
@@ -68,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         isLoading,
         isAuthenticated: !!user,
-        isAdmin: user?.role === 'ADMIN',
+        isAdmin: user?.role === "ADMIN",
         login,
         register,
         logout,
@@ -82,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 }
