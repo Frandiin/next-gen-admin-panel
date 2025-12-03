@@ -9,7 +9,9 @@ import type {
   UsersResponse,
 } from "@/types";
 
-const API_URL = process.env.API_URL || "http://localhost:3000";
+const API_URL =
+  process.env.API_URL ||
+  "https://nest-prisma-docker-production.up.railway.app/";
 
 export const api = axios.create({
   baseURL: API_URL,
