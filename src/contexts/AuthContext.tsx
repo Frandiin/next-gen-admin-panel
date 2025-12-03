@@ -25,7 +25,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   const loadUser = useCallback(async () => {
-    const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("access_token");
     const storedUser = localStorage.getItem("user");
 
     if (token && storedUser) {
@@ -36,7 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(profile);
         localStorage.setItem("user", JSON.stringify(profile));
       } catch {
-        localStorage.removeItem("accessToken");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("user");
         setUser(null);
       }
@@ -50,20 +50,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const response = await authApi.login({ email, password });
-    localStorage.setItem("accessToken", response.access_token);
+    localStorage.setItem("access_token", response.access_token);
     localStorage.setItem("user", JSON.stringify(response.user));
     setUser(response.user);
   };
 
   const register = async (email: string, password: string, name: string) => {
     const response = await authApi.register({ email, password, name });
-    localStorage.setItem("accessToken", response.access_token);
+    localStorage.setItem("access_token", response.access_token);
     localStorage.setItem("user", JSON.stringify(response.user));
     setUser(response.user);
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem("access_token");
     localStorage.removeItem("user");
     setUser(null);
   };
