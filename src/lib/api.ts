@@ -10,12 +10,11 @@ import type {
 } from "@/types";
 
 const API_URL =
-  process.env.API_URL ||
-  "https://nest-prisma-docker-production.up.railway.app/";
+  process.env.API_URL || "https://nest-prisma-docker-production.up.railway.app";
 
 export const api = axios.create({
   baseURL: API_URL,
-  withCredentials: false,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
