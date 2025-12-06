@@ -3,9 +3,14 @@ export interface User {
   email: string;
   name: string;
   role: "USER" | "ADMIN";
+  avatar?: string;
+  posts?: Post[];
+  count: number;
+  comments?: Comment[];
   createdAt: string;
   updatedAt: string;
 }
+
 export interface UsersResponse {
   data: User[];
   meta: {
@@ -24,18 +29,35 @@ export interface Category {
   createdAt: string;
   updatedAt: string;
 }
+export interface UploadResponse {
+  message: string;
+  url: string;
+}
 
 export interface Post {
-  id: number;
+  id?: number;
   title: string;
-  slug: string;
-  content: string;
+  slug?: string;
+  content?: string;
   excerpt?: string;
   published: boolean;
-  authorId: number;
+  authorId?: number;
   categoryId?: number;
+  coverImage?: string;
   author?: User;
+  comments?: Comment[];
   category?: Category;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Comment {
+  id: number;
+  content: string;
+  postId: number;
+  authorId: number;
+  post?: Post;
+  author?: User;
   createdAt: string;
   updatedAt: string;
 }

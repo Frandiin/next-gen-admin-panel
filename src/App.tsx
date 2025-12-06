@@ -15,6 +15,7 @@ import CategoriesAdmin from "./pages/admin/CategoriesAdmin";
 import UsersAdmin from "./pages/admin/UsersAdmin";
 import NotFound from "./pages/NotFound";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/register" element={<Register />} />
             <Route path="/posts/:slug" element={<PostDetail />} />
             <Route path="/categories" element={<Categories />} />
+            <Route path="/profile/:id" element={<Profile />} />
 
             {/* Admin Routes */}
             <Route

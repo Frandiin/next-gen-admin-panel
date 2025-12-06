@@ -7,10 +7,11 @@ import type {
   PaginatedResponse,
   PostFilters,
   UsersResponse,
+  Comment,
+  UploadResponse,
 } from "@/types";
 
-const API_URL =
-  process.env.API_URL || "https://nest-prisma-docker-production.up.railway.app";
+const API_URL = "http://localhost:3000";
 
 export const api = axios.create({
   baseURL: API_URL,
@@ -79,6 +80,11 @@ export const authApi = {
     const response = await api.get<User>("/auth/profile");
     return response.data;
   },
+
+  getProfileById: async (id: number) => {
+    const response = await api.get<User>(`/users/${id}`);
+    return response.data;
+  },
 };
 
 // Posts
@@ -102,15 +108,75 @@ export const postsApi = {
     const response = await api.get<Post>(`/posts/${id}`);
     return response.data;
   },
+
+  getPostUserId: async (userId: number) => {
+    const response = await api.get<PaginatedResponse<Post>>(
+      `/posts/user/${userId}`
+    );
+    return response.data;
+  },
+
+  createComment: async (id: number, data: Partial<Comment>) => {
+    const response = await api.post<Comment>(`/posts/${id}/comments`, data);
+    return response.data;
+  },
+
+  getComments: async (id: number) => {
+    const response = await api.get<Comment[]>(`/posts/${id}/comments`);
+    return response.data;
+  },
+  uploadCover: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token = localStorage.getItem("access_token"); // JWT se necessário
+
+    const response = await api.post<UploadResponse>("/upload/cover", formData, {
+      headers: {
+        ...(token && { Authorization: `Bearer ${token}` }),
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response.data.url;
+  },
+
+  deleteCover: async (postId: number) => {
+    return api.delete(`/posts/${postId}/cover`);
+  },
+
+  deleteAvatar: async (postId: number) => {
+    return api.delete(`/posts/${postId}/cover`);
+  },
+
+  uploadAvatar: async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token = localStorage.getItem("access_token");
+
+    const response = await api.post<UploadResponse>(
+      "/upload/avatar",
+      formData,
+      {
+        headers: {
+          ...(token && { Authorization: `Bearer ${token}` }),
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    return response.data.url;
+  },
   getBySlug: async (slug: string) => {
     const response = await api.get<Post>(`/posts/slug/${slug}`);
     return response.data;
   },
-  create: async (data: Partial<Post>) => {
+  create: async (data: Post) => {
     const response = await api.post<Post>("/posts", data);
     return response.data;
   },
-  update: async (id: number, data: Partial<Post>) => {
+  update: async (id: number, data: Post) => {
     const response = await api.put<Post>(`/posts/${id}`, data);
     return response.data;
   },

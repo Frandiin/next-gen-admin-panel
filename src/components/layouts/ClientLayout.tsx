@@ -1,14 +1,14 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { PenLine, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
+import { PenLine, User, LogOut, LayoutDashboard } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 interface ClientLayoutProps {
   children: React.ReactNode;
@@ -27,10 +27,16 @@ export function ClientLayout({ children }: ClientLayoutProps) {
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              to="/"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
               Home
             </Link>
-            <Link to="/categories" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              to="/categories"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
               Categorias
             </Link>
           </nav>
@@ -56,7 +62,19 @@ export function ClientLayout({ children }: ClientLayoutProps) {
                       <DropdownMenuSeparator />
                     </>
                   )}
-                  <DropdownMenuItem onClick={logout} className="flex items-center gap-2 text-destructive">
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to={`/profile/${user.id}`}
+                      className="flex items-center gap-2"
+                    >
+                      <User className="h-4 w-4" />
+                      Perfil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="flex items-center gap-2 text-destructive"
+                  >
                     <LogOut className="h-4 w-4" />
                     Sair
                   </DropdownMenuItem>

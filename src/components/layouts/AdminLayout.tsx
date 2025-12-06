@@ -1,7 +1,7 @@
-import { Link, useLocation, Navigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { NavLink } from '@/components/NavLink';
-import { Button } from '@/components/ui/button';
+import { Link, useLocation, Navigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { NavLink } from "@/components/NavLink";
+import { Button } from "@/components/ui/button";
 import {
   LayoutDashboard,
   FileText,
@@ -11,25 +11,29 @@ import {
   Menu,
   X,
   Home,
-} from 'lucide-react';
-import { useState } from 'react';
-import { cn } from '@/lib/utils';
+} from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
 const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-  { to: '/admin/posts', icon: FileText, label: 'Posts', end: false },
-  { to: '/admin/categories', icon: FolderTree, label: 'Categorias', end: false },
-  { to: '/admin/users', icon: Users, label: 'Usuários', end: false },
+  { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { to: "/admin/posts", icon: FileText, label: "Posts", end: false },
+  {
+    to: "/admin/categories",
+    icon: FolderTree,
+    label: "Categorias",
+    end: false,
+  },
+  { to: "/admin/users", icon: Users, label: "Usuários", end: false },
 ];
 
 export function AdminLayout({ children }: AdminLayoutProps) {
   const { user, isAdmin, isLoading, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const location = useLocation();
 
   if (isLoading) {
     return (
@@ -48,13 +52,16 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-sidebar-foreground transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto',
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+          "fixed inset-y-0 left-0 z-50 w-64 bg-sidebar text-sidebar-foreground transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-auto",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border">
-            <Link to="/admin" className="text-lg font-serif font-bold text-sidebar-foreground">
+            <Link
+              to="/admin"
+              className="text-lg font-serif font-bold text-sidebar-foreground"
+            >
               Admin Panel
             </Link>
             <Button
@@ -122,7 +129,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           </Button>
           <div className="ml-auto flex items-center gap-4">
             <span className="text-sm text-muted-foreground">
-              Olá, <span className="font-medium text-foreground">{user?.name}</span>
+              Olá,{" "}
+              <span className="font-medium text-foreground">{user?.name}</span>
             </span>
           </div>
         </header>
