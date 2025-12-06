@@ -43,16 +43,32 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  FileText,
+  TvMinimalPlay,
+} from "lucide-react";
 import { format } from "date-fns";
+import { PostMedia } from "@/components/PostMedia";
+import { AdminMediaThumb } from "@/components/AdminMedia";
 
 const postSchema = z.object({
   title: z.string().min(1, "Título é obrigatório").max(200),
-
   content: z.string().min(1, "Conteúdo é obrigatório"),
-
   published: z.boolean(),
   categoryId: z.string().optional(),
+  coverImage: z
+    .any()
+    .refine(
+      (file) => !file || (file instanceof File && file.size <= 5_000_000),
+      {
+        message: "A imagem deve ter no máximo 5MB",
+      }
+    )
+    .optional(),
 });
 
 type PostForm = z.infer<typeof postSchema>;
@@ -102,7 +118,7 @@ export default function Posts() {
     setEditingPost(null);
     reset({
       title: "",
-
+      coverImage: undefined,
       content: "",
       published: false,
       categoryId: undefined,
@@ -114,7 +130,7 @@ export default function Posts() {
     setEditingPost(post);
     reset({
       title: post.title,
-
+      coverImage: undefined,
       content: post.content,
       published: post.published,
       categoryId: post.categoryId ? String(post.categoryId) : undefined,
@@ -125,9 +141,38 @@ export default function Posts() {
   const onSubmit = async (data: PostForm) => {
     setIsSubmitting(true);
     try {
-      const payload = {
-        ...data,
+      let coverImageUrl;
+
+      if (data.coverImage) {
+        const formData = new FormData();
+        formData.append("file", data.coverImage);
+
+        const uploadResponse = await fetch(
+          "http://localhost:3000/upload/cover",
+          {
+            method: "POST",
+            body: formData,
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+
+        if (!uploadResponse.ok) throw new Error("Erro no upload da imagem");
+
+        const result = await uploadResponse.json();
+        coverImageUrl = {
+          url: result.url,
+          publicId: result.publicId,
+        };
+      }
+
+      const payload: Post = {
+        title: data.title,
+        content: data.content,
+        published: data.published,
         categoryId: data.categoryId ? Number(data.categoryId) : undefined,
+        coverImage: coverImageUrl,
       };
 
       if (editingPost) {
@@ -137,12 +182,13 @@ export default function Posts() {
         await postsApi.create(payload);
         toast({ title: "Post criado com sucesso!" });
       }
+
       setIsDialogOpen(false);
       loadData();
     } catch (error: any) {
       toast({
         title: "Erro ao salvar post",
-        description: error.response?.data?.message || "Tente novamente.",
+        description: error.message || "Tente novamente.",
         variant: "destructive",
       });
     } finally {
@@ -188,7 +234,8 @@ export default function Posts() {
                 <TableHead>Categoria</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Data</TableHead>
-                <TableHead className="w-24">Ações</TableHead>
+                <TableHead>Ações</TableHead>
+                <TableHead>Mídia</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -208,38 +255,52 @@ export default function Posts() {
                   </TableCell>
                 </TableRow>
               ) : (
-                posts.map((post) => (
-                  <TableRow key={post.id}>
-                    <TableCell className="font-medium">{post.title}</TableCell>
-                    <TableCell>{post.category?.name || "-"}</TableCell>
-                    <TableCell>
-                      <Badge variant={post.published ? "default" : "secondary"}>
-                        {post.published ? "Publicado" : "Rascunho"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {format(new Date(post.createdAt), "dd/MM/yyyy")}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => openEditDialog(post)}
+                posts.map((post) => {
+                  console.log("Post cover image:", post.coverImage);
+                  return (
+                    <TableRow key={post.id}>
+                      <TableCell className="font-medium">
+                        {post.title}
+                      </TableCell>
+                      <TableCell>{post.category?.name || "-"}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={post.published ? "default" : "secondary"}
                         >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeletingPost(post)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
+                          {post.published ? "Publicado" : "Rascunho"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {format(new Date(post.createdAt), "dd/MM/yyyy")}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => openEditDialog(post)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeletingPost(post)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <AdminMediaThumb
+                          url={
+                            post.coverImage ? `${post.coverImage}` : undefined
+                          }
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               )}
             </TableBody>
           </Table>
@@ -290,6 +351,22 @@ export default function Posts() {
                   <p className="text-sm text-destructive">
                     {errors.content.message}
                   </p>
+                )}
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="coverImage">Imagem de Capa</Label>
+                <Input
+                  id="coverImage"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setValue("coverImage", e.target.files?.[0])}
+                />
+                {watch("coverImage") && (
+                  <img
+                    src={URL.createObjectURL(watch("coverImage"))}
+                    alt="Preview da capa"
+                    className="mt-2 h-40 object-cover rounded"
+                  />
                 )}
               </div>
 
