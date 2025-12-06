@@ -1,5 +1,5 @@
 import { ClientLayout } from "@/components/layouts/ClientLayout";
-import { User, Post, Comment, Category, PaginatedResponse } from "@/types";
+import { User, Post, Comment, Category } from "@/types";
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { postsApi, categoriesApi, authApi } from "@/lib/api";

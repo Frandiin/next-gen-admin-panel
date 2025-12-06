@@ -68,7 +68,17 @@ export interface AuthResponse {
   user: User;
 }
 
-export interface PaginatedResponse<T> {
+export interface ApiResponse<T> {
+  data: T;
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface PaginateResponse<T> {
   data: T[];
   meta: {
     total: number;

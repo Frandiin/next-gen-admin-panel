@@ -4,11 +4,12 @@ import type {
   Post,
   Category,
   AuthResponse,
-  PaginatedResponse,
   PostFilters,
   UsersResponse,
   Comment,
   UploadResponse,
+  ApiResponse,
+  PaginateResponse,
 } from "@/types";
 
 export const api = axios.create({
@@ -87,8 +88,9 @@ export const authApi = {
 
 // Posts
 export const postsApi = {
-  getAll: async (filters?: PostFilters) => {
+  getAll: async (filters?: PostFilters): Promise<ApiResponse<Post[]>> => {
     const params = new URLSearchParams();
+
     if (filters?.search) params.append("search", filters.search);
     if (filters?.published !== undefined)
       params.append("published", String(filters.published));
@@ -97,9 +99,7 @@ export const postsApi = {
     if (filters?.page) params.append("page", String(filters.page));
     if (filters?.limit) params.append("limit", String(filters.limit));
 
-    const response = await api.get<Post[] | PaginatedResponse<Post>>(
-      `/posts?${params}`
-    );
+    const response = await api.get<ApiResponse<Post[]>>(`/posts?${params}`);
     return response.data;
   },
   getById: async (id: number) => {
@@ -108,7 +108,7 @@ export const postsApi = {
   },
 
   getPostUserId: async (userId: number) => {
-    const response = await api.get<PaginatedResponse<Post>>(
+    const response = await api.get<PaginateResponse<Post>>(
       `/posts/user/${userId}`
     );
     return response.data;

@@ -36,7 +36,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  
+
   // Create Post Modal State
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
@@ -56,7 +56,7 @@ const Index = () => {
           postsApi.getAll({ published: true }),
           categoriesApi.getAll(),
         ]);
-        setPosts(Array.isArray(postsData) ? postsData : postsData.data);
+        setPosts(postsData.data);
         setCategories(categoriesData);
       } catch (error) {
         console.error("Error loading data:", error);
@@ -82,7 +82,7 @@ const Index = () => {
         filters.categoryId = Number(categoryFilter);
 
       const data = await postsApi.getAll(filters);
-      setPosts(Array.isArray(data) ? data : data.data);
+      setPosts(data.data);
     } catch (error) {
       console.error("Error searching:", error);
     } finally {
@@ -126,7 +126,7 @@ const Index = () => {
     setIsCreating(true);
     try {
       let coverImageUrl: string | undefined;
-      
+
       // Upload cover image if selected
       if (coverFile) {
         coverImageUrl = await postsApi.uploadCover(coverFile);
@@ -142,7 +142,7 @@ const Index = () => {
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const createdPost = await postsApi.create(postData as any);
-      
+
       // Add to posts list if published
       if (createdPost.published) {
         setPosts((prev) => [createdPost, ...prev]);
@@ -183,7 +183,10 @@ const Index = () => {
               Aprenda, cresça e se inspire.
             </p>
             {isAuthenticated && (
-              <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+              <Dialog
+                open={isCreateModalOpen}
+                onOpenChange={setIsCreateModalOpen}
+              >
                 <DialogTrigger asChild>
                   <Button size="lg" className="gap-2">
                     <Plus className="h-5 w-5" />
@@ -206,7 +209,10 @@ const Index = () => {
                         placeholder="Digite o título do post..."
                         value={newPost.title || ""}
                         onChange={(e) =>
-                          setNewPost((prev) => ({ ...prev, title: e.target.value }))
+                          setNewPost((prev) => ({
+                            ...prev,
+                            title: e.target.value,
+                          }))
                         }
                       />
                     </div>
@@ -220,7 +226,10 @@ const Index = () => {
                         rows={6}
                         value={newPost.content || ""}
                         onChange={(e) =>
-                          setNewPost((prev) => ({ ...prev, content: e.target.value }))
+                          setNewPost((prev) => ({
+                            ...prev,
+                            content: e.target.value,
+                          }))
                         }
                       />
                     </div>
@@ -312,7 +321,10 @@ const Index = () => {
                         id="published"
                         checked={newPost.published || false}
                         onCheckedChange={(checked) =>
-                          setNewPost((prev) => ({ ...prev, published: checked }))
+                          setNewPost((prev) => ({
+                            ...prev,
+                            published: checked,
+                          }))
                         }
                       />
                     </div>
@@ -399,7 +411,7 @@ const Index = () => {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
+            {posts?.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}
           </div>
