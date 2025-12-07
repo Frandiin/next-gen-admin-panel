@@ -140,34 +140,22 @@ export default function Posts() {
 
   const onSubmit = async (data: PostForm) => {
     setIsSubmitting(true);
+
     try {
-      let coverImageUrl;
+      let coverImageUrl = undefined;
 
-      if (data.coverImage) {
-        const formData = new FormData();
-        formData.append("file", data.coverImage);
+      // 👇 Mantendo seu modelo, mas usando sua service
+      if (data.coverImage instanceof File) {
+        const uploadResult = await postsApi.uploadCover(data.coverImage);
 
-        const uploadResponse = await fetch(
-          "http://localhost:3000/upload/cover",
-          {
-            method: "POST",
-            body: formData,
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        if (!uploadResponse.ok) throw new Error("Erro no upload da imagem");
-
-        const result = await uploadResponse.json();
         coverImageUrl = {
-          url: result.url,
-          publicId: result.publicId,
+          url: uploadResult,
+          publicId: uploadResult,
         };
       }
 
-      const payload: Post = {
+      // 👇 Mantive seu payload exatamente como no modelo
+      const payload = {
         title: data.title,
         content: data.content,
         published: data.published,
