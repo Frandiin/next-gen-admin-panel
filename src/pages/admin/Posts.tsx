@@ -144,17 +144,12 @@ export default function Posts() {
     try {
       let coverImageUrl = undefined;
 
-      // 👇 Mantendo seu modelo, mas usando sua service
       if (data.coverImage instanceof File) {
-        const uploadResult = await postsApi.uploadCover(data.coverImage);
+        const uploadedUrl = await postsApi.uploadCover(data.coverImage);
 
-        coverImageUrl = {
-          url: uploadResult,
-          publicId: uploadResult,
-        };
+        coverImageUrl = uploadedUrl;
       }
 
-      // 👇 Mantive seu payload exatamente como no modelo
       const payload = {
         title: data.title,
         content: data.content,
