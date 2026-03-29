@@ -13,7 +13,7 @@ import type {
 } from "@/types";
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.API_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -36,7 +36,7 @@ api.interceptors.response.use(
       window.location.href = "/login";
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 // Auth
@@ -109,7 +109,7 @@ export const postsApi = {
 
   getPostUserId: async (userId: number) => {
     const response = await api.get<PaginateResponse<Post>>(
-      `/posts/user/${userId}`
+      `/posts/user/${userId}`,
     );
     return response.data;
   },
@@ -161,7 +161,7 @@ export const postsApi = {
           ...(token && { Authorization: `Bearer ${token}` }),
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
 
     return response.data.url;
