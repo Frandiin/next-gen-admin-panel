@@ -66,7 +66,7 @@ const postSchema = z.object({
       (file) => !file || (file instanceof File && file.size <= 5_000_000),
       {
         message: "A imagem deve ter no máximo 5MB",
-      }
+      },
     )
     .optional(),
 });
@@ -102,7 +102,7 @@ export default function Posts() {
         categoriesApi.getAll(),
       ]);
       setPosts(Array.isArray(postsData) ? postsData : postsData.data);
-      setCategories(categoriesData);
+      setCategories(categoriesData.data);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {

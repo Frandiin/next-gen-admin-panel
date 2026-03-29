@@ -51,7 +51,7 @@ export default function CategoriesAdmin() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [deletingCategory, setDeletingCategory] = useState<Category | null>(
-    null
+    null,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -67,7 +67,7 @@ export default function CategoriesAdmin() {
 
   const loadCategories = async () => {
     try {
-      const data = await categoriesApi.getAll();
+      const { data } = await categoriesApi.getAll();
       setCategories(data);
     } catch (error) {
       console.error("Error loading categories:", error);
