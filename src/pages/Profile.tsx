@@ -89,7 +89,7 @@ export default function Profile() {
           postsApi.getComments(Number(id)),
         ]);
       setUser(userData);
-      setCategories(categoriesData);
+      setCategories(categoriesData.data);
       setPosts(postData.data);
       setComments(commentData);
     } catch (err) {
@@ -346,7 +346,7 @@ export default function Profile() {
                           {format(
                             new Date(post.createdAt),
                             "d 'de' MMMM, yyyy",
-                            { locale: ptBR }
+                            { locale: ptBR },
                           )}
                         </p>
                       )}
