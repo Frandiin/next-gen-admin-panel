@@ -13,11 +13,14 @@ import type {
 } from "@/types";
 
 export const api = axios.create({
-  baseURL: import.meta.env.API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
+{
+  console.log(">>>", import.meta.env.VITE_API_URL);
+}
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token");
@@ -185,7 +188,7 @@ export const postsApi = {
 
 // Categories
 export const categoriesApi = {
-  getAll: async () => {
+  getAll: async (): Promise<ApiResponse<Category[]>> => {
     const response = await api.get<Category[]>("/categories");
     return response.data;
   },

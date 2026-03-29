@@ -57,7 +57,7 @@ const Index = () => {
           categoriesApi.getAll(),
         ]);
         setPosts(postsData.data);
-        setCategories(categoriesData);
+        setCategories(categoriesData.data);
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -378,7 +378,7 @@ const Index = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas categorias</SelectItem>
-              {categories.map((cat) => (
+              {categories?.map((cat) => (
                 <SelectItem key={cat.id} value={String(cat.id)}>
                   {cat.name}
                 </SelectItem>
@@ -405,7 +405,7 @@ const Index = () => {
               </div>
             ))}
           </div>
-        ) : posts.length === 0 ? (
+        ) : posts?.length === 0 ? (
           <div className="text-center py-16">
             <p className="text-muted-foreground">Nenhum post encontrado.</p>
           </div>
