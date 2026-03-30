@@ -102,7 +102,7 @@ export default function Posts() {
         categoriesApi.getAll(),
       ]);
       setPosts(Array.isArray(postsData) ? postsData : postsData.data);
-      setCategories(categoriesData.data);
+      setCategories(categoriesData);
     } catch (error) {
       console.error("Error loading data:", error);
     } finally {

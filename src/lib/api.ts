@@ -189,9 +189,9 @@ export const postsApi = {
 
 // Categories
 export const categoriesApi = {
-  getAll: async (): Promise<ApiResponse<Category[]>> => {
-    const response = await api.get<Category[]>("/categories");
-    return response.data;
+  getAll: async (): Promise<Category[]> => {
+    const { data } = await api.get<Category[]>("/categories");
+    return data;
   },
   getById: async (id: number) => {
     const response = await api.get<Category>(`/categories/${id}`);

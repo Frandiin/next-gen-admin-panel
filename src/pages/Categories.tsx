@@ -12,7 +12,7 @@ export default function Categories() {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const { data } = await categoriesApi.getAll();
+        const data = await categoriesApi.getAll();
         setCategories(data);
       } catch (error) {
         console.error("Error loading categories:", error);

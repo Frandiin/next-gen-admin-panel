@@ -57,7 +57,7 @@ const Index = () => {
           categoriesApi.getAll(),
         ]);
         setPosts(postsData.data);
-        setCategories(categoriesData.data);
+        setCategories(categoriesData);
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {

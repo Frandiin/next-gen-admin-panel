@@ -89,7 +89,7 @@ export default function Profile() {
           postsApi.getComments(Number(id)),
         ]);
       setUser(userData);
-      setCategories(categoriesData.data);
+      setCategories(categoriesData);
       setPosts(postData.data);
       setComments(commentData);
     } catch (err) {
