@@ -92,6 +92,7 @@ export default function Profile() {
       setCategories(categoriesData);
       setPosts(postData.data);
       setComments(commentData);
+      console.log("userData", userData);
     } catch (err) {
       setError("Usuário não encontrado");
     } finally {
